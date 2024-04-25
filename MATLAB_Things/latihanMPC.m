@@ -16,30 +16,45 @@ C = [0 0 0 1 0 0;
     0 0 0 0 0 1];
 D = 0;
 
-sys = ss(A,B,C,D);
+sysc = ss(A,B,C,D);
 
 % set names
-sys.InputName = {'tau_roll','tau_pitch','tau_yaw'};
-sys.OutputName = {'RollSppeed','PitchSpeed','YawSpeed'};
+sysc.InputName = {'tau_roll','tau_pitch','tau_yaw'};
+sysc.OutputName = {'RollSppeed','PitchSpeed','YawSpeed'};
 
 %%
-sys = setmpcsignals(sysdis2,'MV',[1,2,3],'MO',[1,2,3]);
+% sys = setmpcsignals(ss_est_new,'MV',[2,3],'MO',[2,3],'UD',1,'UO',1);
+% sys = setmpcsignals(ss_est_new,'MV',3,'MO',3,'UD',[1,2],'UO',[1,2]);
+sys = setmpcsignals(ss_est_new,'MV',[1,2,3],'MO',[1,2,3]);
 damp(sys)
 %%
-Ts = 0.1;
-mpcobj = mpc(sys,Ts,5,2)
-for i = 1:3
-    mpcobj.MV(i).Min = -1;
-    mpcobj.MV(i).Max = 1;
-    mpcobj.MV(i).RateMin = -0.1;
-    mpcobj.MV(i).RateMax = 0.1;
-    
-    mpcobj.OV(i).Min = -0.5;
-    mpcobj.OV(i).Max = 0.5;
-    
-end
+% sysdis2.StateName = {'Roll','Pitch','Yaw','RollSppeed','PitchSpeed','YawSpeed'};
+Ts = 0.01;
+mpcobj = mpc(sys,Ts,15,5)
+
+mpcobj.MV(1).Min = -1.257;
+mpcobj.MV(1).Max = 1.257;
+mpcobj.MV(2).Min = -1.257;
+mpcobj.MV(2).Max = 1.257;
+mpcobj.MV(3).Min = -0.2145;
+mpcobj.MV(3).Max = 0.2145;
+
+mpcobj.MV(1).RateMin = -0.7542;
+mpcobj.MV(1).RateMax = 0.7542;
+mpcobj.MV(2).RateMin = -0.7542;
+mpcobj.MV(2).RateMax = 0.7542;
+mpcobj.MV(3).RateMin = -0.1287;
+mpcobj.MV(3).RateMax = 0.1287;
+
 % mpcobj.MV = struct('Min',-0.1,'Max',0.1,'RateMin',-1,'RateMax',1);
 setEstimator(mpcobj,'custom');
+
+review(mpcobj)
+%%
+T = 200;
+r = [0 0 0;
+    1 0 0];
+sim(mpcobj,T,r)
 %%
 C = [1 0 0 0 0 0;
     0 1 0 0 0 0;

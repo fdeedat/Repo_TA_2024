@@ -74,6 +74,7 @@ sysdis2.OutputName = {'RollSpeed','PitchSpeed','YawSpeed'};
 
 %% convert dari pwm ke thrust
 thrust2pwm = [1 -1 1 1;1 1 -1 1; 1 1 1 -1;1 -1 -1 -1];
+%%
 pwm2thrust = inv(thrust2pwm);
 motor = [motor1PWM';motor2PWM';motor3PWM';motor4PWM'];
 thrust = pwm2thrust * motor;
@@ -90,11 +91,40 @@ motor3PWM = motor3PWM(:,2);
 motor4PWM = motor4PWM(:,2);
 
 %% Convert dari thrust ke pwm
-thrust = [tau_thrust';tau_roll';tau_pitch';tau_yaw'];
+thrust = [tau_thrust.Data(:)';tau_roll';tau_pitch';tau_yaw'];
 thrust2pwm = [1 -1 1 1;1 1 -1 1; 1 1 1 -1;1 -1 -1 -1];
 
-pwm = thrust2pwm * thrust;
-pwm1 = (pwm(1,:))';
-pwm2 = (pwm(2,:))';
-pwm3 = (pwm(3,:))';
-pwm4 = (pwm(4,:))'
+pwm = ((thrust2pwm * thrust)+1)*1000;
+pwm = min(2000, max(1000, pwm));
+
+motor1PWM = timeseries((pwm(1,:))');
+motor1PWM.Time = tau_thrust.Time;
+motor2PWM = timeseries((pwm(2,:))');
+motor2PWM.Time = tau_thrust.Time;
+motor3PWM = timeseries((pwm(3,:))');
+motor3PWM.Time = tau_thrust.Time;
+motor4PWM = timeseries((pwm(4,:))');
+motor4PWM.Time = tau_thrust.Time;
+
+%%
+hold off
+figure(1)
+plot(des_yawSpeed);
+hold on;
+plot(pqr.Time,pqr.Data(:,3));
+title('Yaw Speed Controller Performance');
+hold off;
+
+figure(2);
+plot(des_rollSpeed);
+hold on;
+plot(pqr.Time,pqr.Data(:,1));
+title('Roll Speed Controller Performance');
+hold off;
+
+figure(3);
+plot(des_pitchSpeed);
+hold on;
+plot(pqr.Time,pqr.Data(:,2));
+title('Pitch Speed Controller Performance');
+hold off;

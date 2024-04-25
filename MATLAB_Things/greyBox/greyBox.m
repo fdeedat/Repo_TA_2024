@@ -35,13 +35,17 @@ C = [1 0 0 0 0 0;
 D = 0;
 Ts = 0.27;
 m3 = idss(A,B,C,D,'Ts',Ts)
+%%
+Krx = 0.1;
+Kry = 0.1;
+Krz = 0.1;
 %% State space 2 indian revised
 A = [0 0 0 1 0 0;
     0 0 0 0 1 0;
     0 0 0 0 0 1;
-    0 0 0 0 0 0;
-    0 0 0 0 0 0;
-    0 0 0 0 0 0];
+    0 0 0 -Krx/Ixx 0 0;
+    0 0 0 0 -Kry/Iyy 0;
+    0 0 0 0 0 -Krz/Izz];
 B = [0 0 0; 
     0 0 0;
     0 0 0;
@@ -51,6 +55,12 @@ B = [0 0 0;
 C = [0 0 0 1 0 0;
     0 0 0 0 1 0;
     0 0 0 0 0 1];
+% C = [1 0 0 0 0 0;
+%     0 1 0 0 0 0;
+%     0 0 1 0 0 0;
+%     0 0 0 1 0 0;
+%     0 0 0 0 1 0;
+%     0 0 0 0 0 1];
 D = 0;
 Ts = 0.25;
 
@@ -92,24 +102,24 @@ sysZd.OutputName = {'RollSpeed','PitchSpeed','YawSpeed'};
 sysZd.StateName = {'Roll','Pitch','Yaw','RollSpeed','PitchSpeed','YawSpeed'};
 %% 
 % sysdis2 = idss(m4d.A,m4d.B,m4d.C,m4d.D,'Ts',Ts)
-sysdis2 = idss(m4.A,m4.B,m4.C,m4.D,'Ts',0.1)
+sysdis2 = idss(m4.A,m4.B,m4.C,m4.D,'Ts',0.1) % discrete Ts = 0.1
 
 %sysdis2 = idss(sysZd.A,sysZd.B,sysZd.C,sysZd.D,'Ts',Ts)
-%%
+
 sysdis2.Structure.A.Free = false;
 
-sysdis2.Structure.A.Free(1,1) = true;
+% sysdis2.Structure.A.Free(1,1) = true;
 sysdis2.Structure.A.Free(1,4) = true;
-sysdis2.Structure.A.Free(2,2) = true;
+% sysdis2.Structure.A.Free(2,2) = true;
 sysdis2.Structure.A.Free(2,5) = true;
-sysdis2.Structure.A.Free(3,3) = true;
+% sysdis2.Structure.A.Free(3,3) = true;
 sysdis2.Structure.A.Free(3,6) = true;
 %sysdis2.Structure.A.Free(4,8) = true;
 sysdis2.Structure.A.Free(4,4) = true;
 sysdis2.Structure.A.Free(5,5) = true;
 sysdis2.Structure.A.Free(6,6) = true;
-%sysdis2.Structure.A.Free(7,7) = true;
-%sysdis2.Structure.A.Free(8,8) = true;
+% %sysdis2.Structure.A.Free(7,7) = true;
+% %sysdis2.Structure.A.Free(8,8) = true;
 
 sysdis2.Structure.B.Free = true;
 
@@ -126,9 +136,9 @@ sysdis2.Structure.C.Free = false;
 % sysdis2.Structure.C.Free(2,2) = true;
 % sysdis2.Structure.C.Free(3,3) = true;
 % sysdis2.Structure.C.Free(4,8) = true;
-% sysdis2.Structure.C.Free(1,4) = true;
-% sysdis2.Structure.C.Free(2,5) = true;
-% sysdis2.Structure.C.Free(3,6) = true;
+sysdis2.Structure.C.Free(1,4) = true;
+sysdis2.Structure.C.Free(2,5) = true;
+sysdis2.Structure.C.Free(3,6) = true;
 % sysdis2.Structure.C.Free(4,4) = true;
 % sysdis2.Structure.C.Free(5,5) = true;
 % sysdis2.Structure.C.Free(6,6) = true;
@@ -136,31 +146,15 @@ sysdis2.Structure.C.Free = false;
 sysdis2.Structure.D.Free = false;
 %%
 opt = ssestOptions;
-opt.InitialState = 'zero';
+opt.InitialState = 'auto';
+opt.OutputWeight = eye(3);
 %%
 sysdis2 = ssest(pqrDatae,sysdis2,opt)
 
 %%
-mA = [-0.0558,-0.9968,0.0802,0.0415;
-    0.5980,-0.1150,-0.0318,0;
-    -3.0500,0.3880,-0.4650,0;
-    0,0.0805,1.0000,0];
-
-mB = [0.0073,0;
-    -0.4750,0.0077;
-    0.1530,0.1430;
-    0,0];
-
-mC = [0,1,0,0;
-    0,0,0,1];
-
-mD = [0,0;
-    0,0];
-
-sysM = ss(mA,mB,mC,mD,0.01)
-
+par = [Ixx;Iyy;Izz;Krx;Kry;Krz];
+aux = {};
+T = 0;
+mc = idgrey('droneFunc',par,'c',aux,T)
 %%
-mpcControl = setmpcsignals(sysdis2,'MV',[1;2;3],'MO',[1;2;3]);
-old_stauts = mpcverbosity('off');
-%%
-mpcobj = mpc(mpcControl,0.25)
+mc_est = greyest(pqrDatae,mc)
