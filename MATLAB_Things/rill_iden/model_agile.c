@@ -32,7 +32,7 @@
 #define M_PI 3.14159265358979323846
 
 /* Specify the number of outputs here. */
-#define NY 6
+#define NY 3
 
 /* State equations. */
 void compute_dx(
@@ -65,7 +65,7 @@ void compute_dx(
        used in idnlgreydemo1 (dcmotor_c.c) follows.
     */
 
-    double *Ixx, *Iyy, *Izz, *Krx, *Kry, *Krz, *Brx, *Bry, *d, *ct, *cm, *Jr;
+    double *Ixx, *Iyy, *Izz, *Krx, *Kry, *Krz, *d, *ct, *cm, *Jr;
 
     Ixx = p[0]; 
     Iyy = p[1]; 
@@ -73,19 +73,21 @@ void compute_dx(
     Krx = p[3];
     Kry = p[4];
     Krz = p[5];
-    Brx = p[6];
-    Bry = p[7];
-    d = p[8];
-    ct = p[9];
-    cm = p[10];
-    Jr = p[11];
+    // Brx = p[6];
+    // Bry = p[7];
+    d = p[6];
+    ct = p[7];
+    cm = p[8];
+    Jr = p[9];
 
     dx[0] = x[3];
     dx[1] = x[4];
     dx[2] = x[5];
-    dx[3] = ((Iyy[0]-Izz[0])/Ixx[0])*x[4]*x[5]+ (sqrt(2)/2 *ct[0] * d[0]*(pow(u[0],2)-pow(u[1],2)-pow(u[2],2)+pow(u[3],2)))/Ixx[0]- Krx[0]*(x[3]/Ixx[0])+ Jr[0]*x[4]*(u[0]+u[1]-u[2]-u[3])/Ixx[0]- Brx[0]*x[0]/Ixx[0];
-    dx[4] = ((Izz[0]-Ixx[0])/Iyy[0])*x[3]*x[5]+ (sqrt(2)/2 *ct[0] * d[0]*(-pow(u[0],2)+pow(u[1],2)-pow(u[2],2)+pow(u[3],2)))/Iyy[0]- Kry[0]*(x[4]/Iyy[0])- Jr[0]*x[3]*(u[0]+u[1]-u[2]-u[3])/Iyy[0]- Bry[0]*x[1]/Iyy[0];
-    dx[5] = ((Ixx[0]-Iyy[0])/Izz[0])*x[3]*x[4]+ cm[0]*(pow(u[0],2)+pow(u[1],2)-pow(u[2],2)-pow(u[3],2))/Izz[0]-Krz[0]*x[5]/Izz[0];
+    dx[3] = ((Iyy[0]-Izz[0])/Ixx[0])*dx[1]*dx[2]+ (sqrt(2)/2 *ct[0] * d[0]*(-pow(u[0],2)+pow(u[1],2)+pow(u[2],2)-pow(u[3],2)))/Ixx[0]- Krx[0]*(dx[0]/Ixx[0])+ Jr[0]*x[4]*(u[0]+u[1]-u[2]-u[3])/Ixx[0];
+    //- Krx[0]*(x[3]/Ixx[0])+ Jr[0]*x[4]*(u[0]+u[1]-u[2]-u[3])/Ixx[0]- Brx[0]*x[0]/Ixx[0];
+    dx[4] = ((Izz[0]-Ixx[0])/Iyy[0])*dx[0]*dx[2]+ (sqrt(2)/2 *ct[0] * d[0]*(pow(u[0],2)-pow(u[1],2)+pow(u[2],2)-pow(u[3],2)))/Iyy[0]- Kry[0]*(dx[1]/Iyy[0])- Kry[0]*(x[4]/Iyy[0])- Jr[0]*x[3]*(u[0]+u[1]-u[2]-u[3])/Iyy[0];
+        //- Kry[0]*(x[4]/Iyy[0])- Jr[0]*x[3]*(u[0]+u[1]-u[2]-u[3])/Iyy[0]- Bry[0]*x[1]/Iyy[0];
+    dx[5] = ((Ixx[0]-Iyy[0])/Izz[0])*dx[1]*dx[0]+ cm[0]*(pow(u[0],2)+pow(u[1],2)-pow(u[2],2)-pow(u[3],2))/Izz[0]-Krz[0]*x[5]/Izz[0];
 }
 
 /* Output equations. */
@@ -110,12 +112,12 @@ void compute_y(
     /* Example code from ODE function for DCMOTOR example
       used in idnlgreydemo1 (dcmotor_c.c) follows.
     */
-    y[0] = x[0]*180/M_PI;
-    y[1] = x[1]*180/M_PI;
-    y[2] = x[2]*180/M_PI;
-    y[3] = x[3];
-    y[4] = x[4];
-    y[5] = x[5];
+    // y[0] = x[0]*180/M_PI;
+    // y[1] = x[1]*180/M_PI;
+    // y[2] = x[2]*180/M_PI;
+    y[0] = x[3];
+    y[1] = x[4];
+    y[2] = x[5];
 }
 
 

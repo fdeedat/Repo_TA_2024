@@ -113,8 +113,8 @@ w = timeseries([w1_new,w2_new,w3_new,w4_new],timeIMU);
 %% 
 newAtt = resample(attitude,timeIMU);
 %% Buat object data
-flightData = iddata([newAtt.Data(:,1),newAtt.Data(:,2),newAtt.Data(:,3),p,q,r],[w1_new,w2_new,w3_new,w4_new],0.04);
-flightData.OutputName = {"Roll","Pitch","Yaw","RollSpeed","PitchSpeed","YawSpeed"};
+flightData = iddata([p,q,r],[w1_new,w2_new,w3_new,w4_new],0.04);
+flightData.OutputName = {"RollSpeed","PitchSpeed","YawSpeed"};
 flightData.InputName = {"Motor 1","Motor 2","Motor 3","Motor 4"};
 
 %% Thrust & Moment Constants
@@ -140,7 +140,6 @@ tau_thrust = ct*(w1_new.^2+w2_new.^2+w3_new.^2+w4_new.^2);
 tau_roll = (sin(pi/4))*d*ct*(-w1_new.^2+w2_new.^2+w3_new.^2-w4_new.^2)/Ixx;
 tau_pitch = (sin(pi/4))*d*ct*(w1_new.^2-w2_new.^2+w3_new.^2-w4_new.^2)/Iyy;
 tau_yaw = cm*(w1_new.^2+w2_new.^2-w3_new.^2-w4_new.^2)/Izz;
-
 
 %% Plotting 
 figure(1);
