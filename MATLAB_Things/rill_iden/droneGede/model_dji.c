@@ -77,10 +77,10 @@ void compute_dx(
     ct = p[7];
     cm = p[8];
     Jr = p[9];
-    Brx = p[10];
-    Bry = p[11];
-    regM = p[12];
-    regC = p[13];
+    // Brx = p[10];
+    // Bry = p[11];
+    regM = p[10];
+    regC = p[11];
 
     w1 = regM[0]*u[0]+regC[0];
     w2 = regM[0]*u[1]+regC[0];
@@ -90,8 +90,8 @@ void compute_dx(
     dx[0] = x[3];
     dx[1] = x[4];
     dx[2] = x[5];
-    dx[3] = ((Iyy[0]-Izz[0])/Ixx[0])*dx[1]*dx[2]+ (sqrt(2)/2 *ct[0] * d[0]*(-pow(w1,2)+pow(w2,2)+pow(w3,2)-pow(w4,2)))/Ixx[0]- Krx[0]*(dx[0]/Ixx[0])+ Jr[0]*x[4]*(w1+w2-w3-w4)/Ixx[0] - Brx[0]*x[0]/Ixx[0];
-    dx[4] = ((Izz[0]-Ixx[0])/Iyy[0])*dx[0]*dx[2]+ (sqrt(2)/2 *ct[0] * d[0]*(pow(w1,2)-pow(w2,2)+pow(w3,2)-pow(w4,2)))/Iyy[0]- Kry[0]*(dx[1]/Iyy[0])- Jr[0]*x[3]*(w1+w2-w3-w4)/Iyy[0] - Bry[0]*x[1]/Iyy[0];
+    dx[3] = ((Iyy[0]-Izz[0])/Ixx[0])*dx[1]*dx[2]+ (sqrt(2)/2 *ct[0] * d[0]*(-pow(w1,2)+pow(w2,2)+pow(w3,2)-pow(w4,2)))/Ixx[0]- Krx[0]*(dx[0]/Ixx[0])+ Jr[0]*x[4]*(w1+w2-w3-w4)/Ixx[0];// - Brx[0]*x[0]/Ixx[0];
+    dx[4] = ((Izz[0]-Ixx[0])/Iyy[0])*dx[0]*dx[2]+ (sqrt(2)/2 *ct[0] * d[0]*(pow(w1,2)-pow(w2,2)+pow(w3,2)-pow(w4,2)))/Iyy[0]- Kry[0]*(dx[1]/Iyy[0])- Jr[0]*x[3]*(w1+w2-w3-w4)/Iyy[0];// - Bry[0]*x[1]/Iyy[0];
     dx[5] = ((Ixx[0]-Iyy[0])/Izz[0])*dx[1]*dx[0]+ cm[0]*(pow(w1,2)+pow(w2,2)-pow(w3,2)-pow(w4,2))/Izz[0]-Krz[0]*x[5]/Izz[0];
 }
 

@@ -67,9 +67,9 @@ newPWM4(isnan(newPWM4))=0;
 % y = 494.98*x + 304.12
 % try implementing low pass filter
 
-% Filtered PWM to rad/s
-mReg= 670.227060933052;
-cReg= -150.938615927672;
+% Filtered PWM to rad/s 494.98x + 304.12
+mReg= 494.98;
+cReg= 304.12;
 
 for i = 1:length(newPWM1)
     if newPWM1(i) <= 0.12
@@ -136,17 +136,17 @@ flightData.InputName = {"PWM 1","PWM 2","PWM 3","PWM 4"};
 % motor2 = ch3
 % motor3 = ch4
 % motor4 = ch1
-mass = 1.371;
-Ixx = 0.016887157; % Fixed 
-Iyy = 0.016218129; % Fixed
-Izz = 0.022727832; % Fixed
-Krx = 0.01; % 0.0558 / 0.05
-Kry = 0.01; % 0.0248 / 0.05
-Krz = 0.01; % 0.0679 / 0.01
+% mass = 1.371;
+% Ixx = 0.016887157; % Fixed 
+% Iyy = 0.016218129; % Fixed
+% Izz = 0.022727832; % Fixed
+% Krx = 0.01; % 0.0558 / 0.05
+% Kry = 0.01; % 0.0248 / 0.05
+% Krz = 0.01; % 0.0679 / 0.01
 d = 0.215; % Fixed
 ct = 9e-06; 
-cm = 2.8856e-07; % iden: 5.3777e-08 / dari paper: 8e-8 % Fixed
-Jr = 0.0032; % 0.0033
+cm = 1.11983505868590e-06; % iden: 5.3777e-08 / dari paper: 8e-8 % Fixed
+% Jr = 0.0032; % 0.0033
 
 tau_thrust = ct*(w1_new.^2+w2_new.^2+w3_new.^2+w4_new.^2);
 tau_roll = (sin(pi/4))*d*ct*(-w1_new.^2+w2_new.^2+w3_new.^2-w4_new.^2);
@@ -155,9 +155,9 @@ tau_yaw = cm*(w1_new.^2+w2_new.^2-w3_new.^2-w4_new.^2);
 
 plot(tau_thrust)
 
-% flightData_tau = iddata([p,q,r],[tau_roll,tau_pitch,tau_yaw],0.04);
-% flightData_tau.OutputName = {"RollSpeed","PitchSpeed","YawSpeed"};
-% flightData_tau.InputName = {"tau_roll","tau_pitch","tau_yaw"};
+flightData_tau = iddata([p,q,r],[tau_roll,tau_pitch,tau_yaw],0.04);
+flightData_tau.OutputName = {"RollSpeed","PitchSpeed","YawSpeed"};
+flightData_tau.InputName = {"tau_roll","tau_pitch","tau_yaw"};
 
 % newData = flightData_tau(145*25:358*25);
 % vData = newData(1:100*25);
