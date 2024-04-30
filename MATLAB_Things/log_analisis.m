@@ -94,7 +94,7 @@ for i = 1:length(newPWM4)
     end
 end
 %% Filtering
-tc = 5;
+tc = 0.05;
 tf1 = tf(1,[tc 1]);
 
 % Filter the pwm value
@@ -118,12 +118,17 @@ flightData.OutputName = {"RollSpeed","PitchSpeed","YawSpeed"};
 flightData.InputName = {"Motor 1","Motor 2","Motor 3","Motor 4"};
 
 %% Thrust & Moment Constants
-d = 0.11;
-ct = 1.3E-06;
-cm = 8.00E-08;
+mass = 0.745;
 Ixx = 0.004642687; % Fixed 
 Iyy = 0.003385234; % Fixed
 Izz = 0.006060711; % Fixed
+Krx = 0.05; % 0.0558 / 0.05
+Kry = 0.05; % 0.0248 / 0.05
+Krz = 0.01; % 0.0679 / 0.01
+d = 0.11; % Fixed
+ct = 1.2E-06; 
+cm = 6.3777e-08; % iden: 5.3777e-08 / dari pape: 8e-8 % Fixed
+Jr = 6e-9; % 0.0033
 
 %% rad/s to Thrust 
 % motor1 = ch2
@@ -137,10 +142,17 @@ Izz = 0.006060711; % Fixed
 %tau_yaw = cm*(newPWM2.^2+newPWM3.^2-newPWM4.^2-newPWM1.^2);
 %
 tau_thrust = ct*(w1_new.^2+w2_new.^2+w3_new.^2+w4_new.^2);
-tau_roll = (sin(pi/4))*d*ct*(-w1_new.^2+w2_new.^2+w3_new.^2-w4_new.^2)/Ixx;
-tau_pitch = (sin(pi/4))*d*ct*(w1_new.^2-w2_new.^2+w3_new.^2-w4_new.^2)/Iyy;
-tau_yaw = cm*(w1_new.^2+w2_new.^2-w3_new.^2-w4_new.^2)/Izz;
+tau_roll = (sin(pi/4))*d*ct*(-w1_new.^2+w2_new.^2+w3_new.^2-w4_new.^2);
+tau_pitch = (sin(pi/4))*d*ct*(w1_new.^2-w2_new.^2+w3_new.^2-w4_new.^2);
+tau_yaw = cm*(w1_new.^2+w2_new.^2-w3_new.^2-w4_new.^2);
 
+flightData_tau = iddata([p,q,r],[tau_roll,tau_pitch,tau_yaw],0.04);
+flightData_tau.OutputName = {"RollSpeed","PitchSpeed","YawSpeed"};
+flightData_tau.InputName = {"tau_roll","tau_pitch","tau_yaw"};
+
+newData = flightData_tau(145*25:358*25);
+vData = newData(1:100*25);
+eData = newData(101*25:end);
 %% Plotting 
 figure(1);
 plot(tau_roll); % corrcoef = -0.1879

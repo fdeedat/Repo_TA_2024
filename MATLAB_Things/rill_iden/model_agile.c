@@ -85,7 +85,7 @@ void compute_dx(
     dx[2] = x[5];
     dx[3] = ((Iyy[0]-Izz[0])/Ixx[0])*dx[1]*dx[2]+ (sqrt(2)/2 *ct[0] * d[0]*(-pow(u[0],2)+pow(u[1],2)+pow(u[2],2)-pow(u[3],2)))/Ixx[0]- Krx[0]*(dx[0]/Ixx[0])+ Jr[0]*x[4]*(u[0]+u[1]-u[2]-u[3])/Ixx[0];
     //- Krx[0]*(x[3]/Ixx[0])+ Jr[0]*x[4]*(u[0]+u[1]-u[2]-u[3])/Ixx[0]- Brx[0]*x[0]/Ixx[0];
-    dx[4] = ((Izz[0]-Ixx[0])/Iyy[0])*dx[0]*dx[2]+ (sqrt(2)/2 *ct[0] * d[0]*(pow(u[0],2)-pow(u[1],2)+pow(u[2],2)-pow(u[3],2)))/Iyy[0]- Kry[0]*(dx[1]/Iyy[0])- Kry[0]*(x[4]/Iyy[0])- Jr[0]*x[3]*(u[0]+u[1]-u[2]-u[3])/Iyy[0];
+    dx[4] = ((Izz[0]-Ixx[0])/Iyy[0])*dx[0]*dx[2]+ (sqrt(2)/2 *ct[0] * d[0]*(pow(u[0],2)-pow(u[1],2)+pow(u[2],2)-pow(u[3],2)))/Iyy[0]- Kry[0]*(dx[1]/Iyy[0])- Jr[0]*x[3]*(u[0]+u[1]-u[2]-u[3])/Iyy[0];
         //- Kry[0]*(x[4]/Iyy[0])- Jr[0]*x[3]*(u[0]+u[1]-u[2]-u[3])/Iyy[0]- Bry[0]*x[1]/Iyy[0];
     dx[5] = ((Ixx[0]-Iyy[0])/Izz[0])*dx[1]*dx[0]+ cm[0]*(pow(u[0],2)+pow(u[1],2)-pow(u[2],2)-pow(u[3],2))/Izz[0]-Krz[0]*x[5]/Izz[0];
 }
